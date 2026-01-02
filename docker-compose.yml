@@ -1,0 +1,29 @@
+version: '3.8'
+
+services:
+  # Serviço da Base de Dados (MongoDB)
+  mongo:
+    image: mongo:latest
+    container_name: mongodb_container
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongo-data:/data/db
+
+  # Serviço da nossa API
+  api:
+    build: .
+    container_name: projeto_api_container
+    ports:
+      - "5000:8080"
+    depends_on:
+      - mongo
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - MongoDbSettings__ConnectionString=mongodb://mongo:27017
+      - MongoDbSettings__DatabaseName=MinhaApiDb
+      - MongoDbSettings__UsersCollectionName=Users
+      - MongoDbSettings__RolesCollectionName=Roles
+
+volumes:
+  mongo-data:
